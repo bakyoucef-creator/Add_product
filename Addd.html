@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fr" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Produit - Youzin</title>
+    
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">
+                    <i class="fas fa-box-open"></i>
+                    Ajouter un Produit
+                </h1>
+                <div class="auto-save-indicator">
+                    <i class="fas fa-circle"></i>
+                    <span id="saveStatus">Sauvegardé</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="steps-wrapper">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="step-number">1</span>
+                    </div>
+                    <span class="step-label">Informations</span>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">
+                        <i class="fas fa-tags"></i>
+                        <span class="step-number">2</span>
+                    </div>
+                    <span class="step-label">Prix & Offres</span>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">
+                        <i class="fas fa-boxes"></i>
+                        <span class="step-number">3</span>
+                    </div>
+                    <span class="step-label">Stock & Variantes</span>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">
+                        <i class="fas fa-images"></i>
+                        <span class="step-number">4</span>
+                    </div>
+                    <span class="step-label">Médias</span>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-circle">
+                        <i class="fas fa-eye"></i>
+                        <span class="step-number">5</span>
+                    </div>
+                    <span class="step-label">Aperçu</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <form id="productForm" class="product-form">
+            
+            <!-- Step 1: Basic Information -->
+            <div class="form-step active" data-step="1">
+                <h2 class="step-title">
+                    <i class="fas fa-info-circle"></i>
+                    Informations de Base
+                </h2>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="productName" class="required">Nom du Produit</label>
+                        <input type="text" id="productName" name="product_name" class="form-input" placeholder="Entrez le nom du produit..." required>
+                        <span class="error-message" id="productNameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productSKU">Code Produit (SKU)</label>
+                        <div class="input-group">
+                            <input type="text" id="productSKU" name="sku" class="form-input" readonly>
+                            <button type="button" class="btn-icon" id="generateSKU" title="Générer un nouveau code">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <small class="help-text">Généré automatiquement</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryId" class="required">Catégorie</label>
+                        <select id="categoryId" name="category_id" class="form-select" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="1">Électronique</option>
+                            <option value="2">Mode & Vêtements</option>
+                            <option value="3">Chaussures & Sacs</option>
+                            <option value="4">Maison & Cuisine</option>
+                            <option value="5">Beauté & Soins</option>
+                            <option value="6">Sport & Fitness</option>
+                            <option value="7">Jeux & Divertissement</option>
+                            <option value="8">Livres & Papeterie</option>
+                            <option value="9">Meubles & Décoration</option>
+                            <option value="10">Téléphones & Accessoires</option>
+                            <option value="11">Ordinateurs & Laptops</option>
+                            <option value="12">Montres & Bijoux</option>
+                            <option value="13">Outils & Équipements</option>
+                            <option value="14">Automobiles & Accessoires</option>
+                            <option value="15">Jardins & Plantes</option>
+                            <option value="16">Enfants & Bébés</option>
+                            <option value="17">Fournitures Médicales</option>
+                            <option value="18">Aliments & Boissons</option>
+                            <option value="19">Animaux de Compagnie</option>
+                            <option value="20">Cadeaux & Occasions</option>
+                            <option value="other">Autre...</option>
+                        </select>
+                        <span class="error-message" id="categoryIdError"></span>
+                    </div>
+
+                    <div class="form-group" id="customCategoryGroup" style="display: none;">
+                        <label for="customCategory">Nouvelle Catégorie</label>
+                        <input type="text" id="customCategory" name="custom_category" class="form-input" placeholder="Entrez le nom de la catégorie...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brandId">Marque</label>
+                        <select id="brandId" name="brand_id" class="form-select">
+                            <option value="">-- Sélectionner --</option>
+                            <optgroup label="Électronique">
+                                <option value="1">Samsung</option>
+                                <option value="2">Apple</option>
+                                <option value="3">LG</option>
+                                <option value="4">Sony</option>
+                                <option value="5">Huawei</option>
+                                <option value="6">Xiaomi</option>
+                            </optgroup>
+                            <optgroup label="Mode">
+                                <option value="7">Nike</option>
+                                <option value="8">Adidas</option>
+                                <option value="9">Zara</option>
+                                <option value="10">H&M</option>
+                                <option value="11">Puma</option>
+                            </optgroup>
+                            <optgroup label="Général">
+                                <option value="12">Sans Marque</option>
+                                <option value="13">Marque Locale</option>
+                                <option value="14">Fait Main</option>
+                            </optgroup>
+                            <option value="other">Autre...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="customBrandGroup" style="display: none;">
+                        <label for="customBrand">Nouvelle Marque</label>
+                        <input type="text" id="customBrand" name="custom_brand" class="form-input" placeholder="Entrez le nom de la marque...">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="shortDescription" class="required">Description Courte</label>
+                        <textarea id="shortDescription" name="short_description" class="form-textarea" rows="3" placeholder="Description courte du produit (2-3 lignes)..." maxlength="500" required></textarea>
+                        <div class="char-counter">
+                            <span id="shortDescCount">0</span> / 500
+                        </div>
+                        <span class="error-message" id="shortDescriptionError"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="detailedDescription" class="required">Description Détaillée</label>
+                        <div id="detailedDescriptionEditor" class="quill-editor"></div>
+                        <input type="hidden" name="detailed_description" id="detailedDescriptionContent">
+                        <span class="error-message" id="detailedDescriptionError"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="videoUrl">Lien Vidéo Externe</label>
+                        <input type="url" id="videoUrl" name="video_url" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
+                        <small class="help-text">Supporte YouTube et Vimeo</small>
+                        <span class="error-message" id="videoUrlError"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="productTags">Tags de Recherche (5 max)</label>
+                        <div class="tags-input-container">
+                            <div class="tags-list" id="tagsList"></div>
+                            <input type="text" id="tagsInput" class="tags-input" placeholder="Tapez un tag et appuyez sur Entrée...">
+                        </div>
+                        <input type="hidden" name="product_tags" id="productTags">
+                        <small class="help-text">Ajoutez des tags pour faciliter la recherche</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Pricing & Offers -->
+            <div class="form-step" data-step="2">
+                <h2 class="step-title">
+                    <i class="fas fa-tags"></i>
+                    Prix et Offres
+                </h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="currency" class="required">Devise</label>
+                        <select id="currency" name="currency" class="form-select" required>
+                            <option value="DZD" selected>Dinar Algérien (DZD)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="USD">Dollar Américain (USD)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regularPrice" class="required">Prix Avant Réduction</label>
+                        <div class="input-with-icon">
+                            <input type="number" id="regularPrice" name="regular_price" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                            <span class="input-icon currency-symbol">DZD</span>
+                        </div>
+                        <span class="error-message" id="regularPriceError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salePrice">Prix Après Réduction</label>
+                        <div class="input-with-icon">
+                            <input type="number" id="salePrice" name="sale_price" class="form-input" placeholder="0.00" step="0.01" min="0">
+                            <span class="input-icon currency-symbol">DZD</span>
+                        </div>
+                        <span class="error-message" id="salePriceError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pourcentage de Réduction</label>
+                        <div class="discount-display">
+                            <span id="discountPercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <div class="section-header">
+                            <label>Offres de Quantité</label>
+                            <button type="button" class="btn-add" id="addCustomOffer">
+                                <i class="fas fa-plus"></i>
+                                Ajouter Offre Personnalisée
+                            </button>
+                        </div>
+                        
+                        <div class="offers-list">
+                            <div class="offer-item">
+                                <input type="checkbox" id="offer1" name="offers[]" value="buy1">
+                                <label for="offer1">Acheter 1 pièce</label>
+                            </div>
+                            <div class="offer-item">
+                                <input type="checkbox" id="offer2" name="offers[]" value="buy2">
+                                <label for="offer2">Acheter 2 pièces avec réduction 10%</label>
+                            </div>
+                            <div class="offer-item">
+                                <input type="checkbox" id="offer3" name="offers[]" value="buy3">
+                                <label for="offer3">Acheter 3 pièces avec réduction 20%</label>
+                            </div>
+                        </div>
+
+                        <div id="customOffersContainer" class="custom-offers-container">
+                            <!-- Custom offers will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Inventory & Variants -->
+            <div class="form-step" data-step="3">
+                <h2 class="step-title">
+                    <i class="fas fa-boxes"></i>
+                    Stock et Variantes
+                </h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="stockQuantity" class="required">Quantité en Stock</label>
+                        <input type="number" id="stockQuantity" name="stock_quantity" class="form-input" placeholder="0" min="0" required>
+                        <span class="error-message" id="stockQuantityError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCondition" class="required">État du Produit</label>
+                        <select id="productCondition" name="product_condition" class="form-select" required>
+                            <option value="new" selected>Neuf</option>
+                            <option value="used">Occasion</option>
+                            <option value="refurbished">Reconditionné</option>
+                            <option value="display">Exposition</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="usageGradeGroup" style="display: none;">
+                        <label for="usageGrade">Degré d'Utilisation</label>
+                        <select id="usageGrade" name="usage_grade" class="form-select">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Bon</option>
+                            <option value="fair">Acceptable</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <div class="section-header">
+                            <label>Variantes du Produit</label>
+                            <button type="button" class="btn-add" id="addVariant">
+                                <i class="fas fa-plus"></i>
+                                Ajouter Variante
+                            </button>
+                        </div>
+                        <small class="help-text">Ex: Couleur (rouge, bleu, noir), Taille (S, M, L)</small>
+                        <div id="variantsContainer" class="variants-container">
+                            <!-- Variants will be added dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Media -->
+            <div class="form-step" data-step="4">
+                <h2 class="step-title">
+                    <i class="fas fa-images"></i>
+                    Images du Produit
+                </h2>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="required">Images (5 maximum)</label>
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Glissez-déposez les images ici</p>
+                                <span>ou</span>
+                                <label for="imageInput" class="btn-upload">
+                                    <i class="fas fa-folder-open"></i>
+                                    Choisir les Images
+                                </label>
+                                <input type="file" id="imageInput" name="images[]" accept="image/*" multiple hidden>
+                                <small class="help-text">PNG, JPG, WEBP (Maximum: 5 images)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="images-preview" id="imagesPreview">
+                            <!-- Uploaded images will appear here -->
+                        </div>
+                        <input type="hidden" name="primary_image_index" id="primaryImageIndex" value="0">
+                        <span class="error-message" id="imagesError"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Preview & Save -->
+            <div class="form-step" data-step="5">
+                <h2 class="step-title">
+                    <i class="fas fa-eye"></i>
+                    Aperçu du Produit
+                </h2>
+
+                <div class="preview-container" id="previewContainer">
+                    <!-- Product preview will be generated here -->
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation">
+                <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">
+                    <i class="fas fa-arrow-right"></i>
+                    Précédent
+                </button>
+                
+                <button type="button" class="btn btn-outline" id="saveDraftBtn">
+                    <i class="fas fa-save"></i>
+                    Sauvegarder Brouillon
+                </button>
+                
+                <button type="button" class="btn btn-danger" id="cancelBtn">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                
+                <div class="nav-spacer"></div>
+                
+                <button type="button" class="btn btn-primary" id="nextBtn">
+                    Suivant
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                
+                <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                    <i class="fas fa-check"></i>
+                    Enregistrer le Produit
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Confirmer l'Action</h3>
+                <button type="button" class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Êtes-vous sûr de vouloir continuer ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modalCancel">Annuler</button>
+                <button type="button" class="btn btn-danger" id="modalConfirm">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quill Editor -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    
+    <!-- Sortable.js for drag & drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+</html>
